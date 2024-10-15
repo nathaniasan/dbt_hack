@@ -41,9 +41,6 @@ models:
          materialized: table
 
 sources:
-  staging_1:
-    tables:
-      - name: absensi_cb
-      - name: act_instruktur
-      - name: all_batch
-      - name: new_batch
+   staging_1:
+      tables:
+         - all_batch
