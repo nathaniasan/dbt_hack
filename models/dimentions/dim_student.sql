@@ -6,7 +6,8 @@ with stg_student as (
     FROM staging_1.all_batch
     where `Name` is not null
     and `Name` != '#REF!'                -- Exclude "#REF!" values
-      and `Name` != '-'  
+    and `Name` != '-'  
+    
 )
 
 select row_number() over (order by `student_name`) as student_id, student_name
