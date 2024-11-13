@@ -1,26 +1,23 @@
+{{ config(materialized='table') }}
+
 with stg_batch as (
-    select distinct Batch as combined_value, 'Batch' as source
-    FROM staging_1.all_batch
-    where Batch is not null
-    and Batch != '#REF!'                
-    and Batch != '-'  
-
-    UNION ALL
-
-    select distinct Phase as combined_value, 'Phase' as source
-    FROM staging_1.all_batch
-    where Phase is not null
-    and Phase != '#REF!'                
-    and Phase != '-'  
-
-    UNION ALL
-
-    select distinct Location as combined_value, 'Location' as source
-    FROM staging_1.all_batch
-    where Location is not null
-    and Location != '#REF!'                
-    and Location != '-'  
+    select 
+        distinct 
+        cast(Batch as STRING) as Batch,   -- Convert Batch to STRING to ensure consistent data types
+        cast(Phase as STRING) as Phase, 
+        cast(Location as STRING) as Location
+    from 
+        staging_1.all_batch
+    where 
+        Batch is not null 
+        and Batch != 0                -- Exclude invalid values
+        and Batch != -1 
 )
 
-select row_number() over (order by combined_value) as id, combined_value, source
-from stg_batch
+select 
+    row_number() over (order by Batch, Phase, Location) as id,  -- Generate a unique ID for each combination
+    Batch, 
+    Phase, 
+    Location
+from 
+    stg_batch
